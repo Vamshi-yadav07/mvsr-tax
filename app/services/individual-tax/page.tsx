@@ -2,13 +2,13 @@
 
 import { motion } from "framer-motion"
 import Link from "next/link"
-import { 
-  ArrowLeft, 
-  ArrowUpRight, 
-  Check, 
-  Phone, 
-  FileText, 
-  Shield, 
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  Check,
+  Phone,
+  FileText,
+  Shield,
   Clock,
   Globe,
   GraduationCap,
@@ -191,23 +191,21 @@ export default function IndividualTaxPage() {
                 Individual Tax Preparation Services
               </h1>
               <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-                Tackle Tax Season with Confidence – Let MVSR Tax Simplify the Process! 
-                Keeping up with today's ever-changing tax laws can make even a simple 
+                Tackle Tax Season with Confidence – Let MVSR Tax Simplify the Process!
+                Keeping up with today's ever-changing tax laws can make even a simple
                 tax return feel like a daunting task.
               </p>
               <p className="mt-4 text-muted-foreground">
-                According to a leading accounting survey, 71% of individuals prefer working 
-                with a tax professional over navigating online tax software. Why? Because 
+                According to a leading accounting survey, 71% of individuals prefer working
+                with a tax professional over navigating online tax software. Why? Because
                 expert guidance ensures no deduction or credit goes unnoticed.
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-4">
                 <Button size="lg" className="gap-2 px-8 py-6">
                   Schedule Consultation
-                  <ArrowUpRight className="size-4" />
                 </Button>
                 <Button size="lg" variant="outline" className="gap-2 px-8 py-6">
-                  <Phone className="size-4" />
                   Call 510-742-1419
                 </Button>
               </div>
@@ -264,8 +262,8 @@ export default function IndividualTaxPage() {
                 Our Areas of Expertise
               </h2>
               <p className="mt-4 text-muted-foreground">
-                At MVSR Tax, we specialize in personalized, precise, and efficient tax 
-                solutions tailored to your unique financial situation. Our experienced 
+                At MVSR Tax, we specialize in personalized, precise, and efficient tax
+                solutions tailored to your unique financial situation. Our experienced
                 professionals stay ahead of the latest tax laws.
               </p>
             </div>
@@ -388,7 +386,7 @@ export default function IndividualTaxPage() {
               Why Choose MVSR Tax
             </h2>
             <p className="mt-4 max-w-2xl text-muted-foreground">
-              With thousands of satisfied clients across the USA, MVSR Tax is your 
+              With thousands of satisfied clients across the USA, MVSR Tax is your
               trusted partner for reliable, personalized tax preparation services.
             </p>
 
@@ -459,8 +457,8 @@ export default function IndividualTaxPage() {
 
             <div className="mt-8 rounded-xl bg-muted/50 p-6">
               <p className="text-sm text-muted-foreground">
-                <strong className="text-foreground">Note:</strong> Every client will be granted access 
-                to our secured client portal. Please call our office at <strong>510-742-1419</strong> for 
+                <strong className="text-foreground">Note:</strong> Every client will be granted access
+                to our secured client portal. Please call our office at <strong>510-742-1419</strong> for
                 the initial account setup. Your copy of tax return will be made available in the portal.
               </p>
             </div>
@@ -536,8 +534,8 @@ export default function IndividualTaxPage() {
               Ready to take the stress out of tax season?
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-background/70">
-              Trust MVSR Tax to provide accurate and efficient tax preparation services. 
-              We've helped thousands of clients across the country minimize their tax 
+              Trust MVSR Tax to provide accurate and efficient tax preparation services.
+              We've helped thousands of clients across the country minimize their tax
               liabilities and optimize their financial strategies.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">

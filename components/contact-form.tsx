@@ -94,20 +94,41 @@ export function ContactForm() {
     if (!validateForm()) return
 
     setIsSubmitting(true)
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    setIsSubmitting(false)
-    setIsSubmitted(true)
 
-    setTimeout(() => {
-      setIsSubmitted(false)
-      setFormData({
-        fullName: "",
-        email: "",
-        phone: "",
-        service: "",
-        message: "",
+    try {
+      const res = await fetch("/api/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          service: formData.service,
+          message: formData.message,
+        }),
       })
-    }, 3000)
+
+      if (!res.ok) {
+        throw new Error("Failed to send")
+      }
+
+      setIsSubmitted(true)
+
+      setTimeout(() => {
+        setIsSubmitted(false)
+        setFormData({
+          fullName: "",
+          email: "",
+          phone: "",
+          service: "",
+          message: "",
+        })
+      }, 3000)
+    } catch {
+      setErrors({ fullName: "Something went wrong. Please try again." })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleChange = (
@@ -139,7 +160,7 @@ export function ContactForm() {
               Let's start a conversation
             </h2>
             <p className="mt-6 text-muted-foreground leading-relaxed">
-              Have questions about our services? We're here to help. Fill out 
+              Have questions about our services? We're here to help. Fill out
               the form and our team will respond within 24 hours.
             </p>
 
@@ -288,7 +309,7 @@ export function ContactForm() {
                         }}
                       >
                         <SelectTrigger
-                          className={errors.service ? "border-destructive" : ""}
+                          className={`w-full ${errors.service ? "border-destructive" : ""}`}
                         >
                           <SelectValue placeholder="Select a service" />
                         </SelectTrigger>

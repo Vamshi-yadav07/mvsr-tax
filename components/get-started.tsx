@@ -44,29 +44,29 @@ const services = [
 ]
 
 const contactDetails = [
-  { 
-    icon: Mail, 
-    label: "Email", 
-    value: "info@mvsrtax.com", 
-    href: "mailto:info@mvsrtax.com" 
+  {
+    icon: Mail,
+    label: "Email",
+    value: "info@mvsrtax.com",
+    href: "mailto:info@mvsrtax.com"
   },
-  { 
-    icon: Phone, 
-    label: "Phone", 
-    value: "(555) 123-4567", 
-    href: "tel:+15551234567" 
+  {
+    icon: Phone,
+    label: "Phone",
+    value: "(555) 123-4567",
+    href: "tel:+15551234567"
   },
-  { 
-    icon: Clock, 
-    label: "Hours", 
-    value: "Mon - Fri: 9AM - 6PM", 
-    href: null 
+  {
+    icon: Clock,
+    label: "Hours",
+    value: "Mon - Fri: 9AM - 6PM",
+    href: null
   },
-  { 
-    icon: MapPin, 
-    label: "Location", 
-    value: "United States", 
-    href: null 
+  {
+    icon: MapPin,
+    label: "Location",
+    value: "United States",
+    href: null
   },
 ]
 
@@ -113,20 +113,35 @@ export default function GetStarted() {
     if (!validateForm()) return
 
     setIsSubmitting(true)
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    setIsSubmitting(false)
-    setIsSubmitted(true)
 
-    setTimeout(() => {
-      setIsSubmitted(false)
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        service: "",
-        message: "",
+    try {
+      const res = await fetch("/api/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       })
-    }, 4000)
+
+      if (!res.ok) {
+        throw new Error("Failed to send")
+      }
+
+      setIsSubmitted(true)
+
+      setTimeout(() => {
+        setIsSubmitted(false)
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          service: "",
+          message: "",
+        })
+      }, 4000)
+    } catch {
+      setErrors({ name: "Something went wrong. Please try again." })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleChange = (
@@ -157,7 +172,7 @@ export default function GetStarted() {
               Let's get started
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-              Ready to take control of your finances? Reach out using the form 
+              Ready to take control of your finances? Reach out using the form
               and we'll get back to you right away.
             </p>
 
@@ -324,7 +339,7 @@ export default function GetStarted() {
                         }}
                       >
                         <SelectTrigger
-                          className={`h-12 ${errors.service ? "border-destructive" : ""}`}
+                          className={`h-12 w-full ${errors.service ? "border-destructive" : ""}`}
                         >
                           <SelectValue placeholder="Select a service" />
                         </SelectTrigger>

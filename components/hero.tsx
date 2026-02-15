@@ -30,15 +30,15 @@ export function Hero() {
             </p>
 
             {/* Title */}
-            <h1 className="font-serif text-4xl leading-[1.1] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+            <h1 className="font-serif text-4xl font-semibold leading-[1.1] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
               Financial clarity,{" "}
               <span className="text-primary">expertly delivered.</span>
             </h1>
 
             {/* Description */}
             <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-              We partner with individuals and businesses to navigate complex tax 
-              landscapes with precision and care. Your financial success is our 
+              We partner with individuals and businesses to navigate complex tax
+              landscapes with precision and care. Your financial success is our
               singular focus.
             </p>
 
@@ -46,15 +46,13 @@ export function Hero() {
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Button size="lg" className="group gap-2 px-8 py-6 text-sm font-medium">
                 Start Your Journey
-                <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
               </Button>
               <Button
                 size="lg"
                 variant="ghost"
-                className="group gap-2 px-6 py-6 text-sm font-medium text-muted-foreground hover:text-foreground"
+                className="group gap-2 px-6 py-6 text-sm font-medium text-muted-foreground hover:text-foreground border border-border"
               >
-                Learn More
-                <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                Book a Call
               </Button>
             </div>
 
@@ -67,7 +65,7 @@ export function Hero() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 + index * 0.1, duration: 0.5 }}
                 >
-                  <p className="font-serif text-3xl tracking-tight text-foreground">
+                  <p className="font-serif text-3xl font-semibold tracking-tight text-foreground">
                     {stat.value}
                   </p>
                   <p className="mt-1 text-sm text-muted-foreground">{stat.label}</p>

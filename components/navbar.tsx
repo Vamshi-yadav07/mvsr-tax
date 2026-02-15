@@ -20,8 +20,8 @@ const services = [
 ]
 
 const navItems = [
-  { label: "About", href: "/#about" },
-  { label: "Insights", href: "/#insights" },
+  // { label: "About", href: "/#about" },
+  { label: "Blogs", href: "/blogs" },
   { label: "FAQ", href: "/faq" },
   { label: "Contact", href: "/contact-us" },
 ]
