@@ -72,17 +72,17 @@ export function ContactForm() {
       newErrors.email = "Please enter a valid email"
     }
 
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Phone is required"
-    }
+    // if (!formData.phone.trim()) {
+    //   newErrors.phone = "Phone is required"
+    // }
 
     if (!formData.service) {
       newErrors.service = "Please select a service"
     }
 
-    if (!formData.message.trim()) {
-      newErrors.message = "Message is required"
-    }
+    // if (!formData.message.trim()) {
+    //   newErrors.message = "Message is required"
+    // }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0

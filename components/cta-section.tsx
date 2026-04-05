@@ -4,8 +4,10 @@ import { motion } from "framer-motion"
 import { ArrowRight } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
 
 export function CTASection() {
+  const router = useRouter()
   return (
     <section className="relative overflow-hidden border-t border-border bg-foreground">
       <div className="mx-auto max-w-6xl px-6 py-24 lg:px-8 lg:py-32">
@@ -36,6 +38,7 @@ export function CTASection() {
             className="mt-10 flex flex-col items-center gap-4 sm:flex-row"
           >
             <Button
+              onClick={() => router.push("/contact-us")}
               size="lg"
               className="gap-2 bg-background px-8 py-6 text-sm font-medium text-foreground hover:bg-background/90"
             >
@@ -43,9 +46,10 @@ export function CTASection() {
               <ArrowRight className="size-4" />
             </Button>
             <Button
+              onClick={() => window.open("https://cal.com/sripathi-vamshi-yadav-cvquju/30min", "_blank")}
               size="lg"
               variant="outline"
-              className="gap-2 border-background/20 bg-transparent px-8 py-6 text-sm font-medium text-background hover:bg-background/10"
+              className="gap-2 border-background/20 bg-transparent px-8 py-6 text-sm font-medium text-background hover:bg-background/10 hover:text-white"
             >
               Schedule a Call
             </Button>

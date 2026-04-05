@@ -95,18 +95,7 @@ export function WhoWeAre() {
             </div>
 
             {/* CTA */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4, duration: 0.4 }}
-              className="mt-10"
-            >
-              <Button variant="outline" className="group gap-2 px-6 py-5 text-sm font-medium">
-                Learn More About Us
-                <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-              </Button>
-            </motion.div>
+            
           </motion.div>
         </div>
       </div>

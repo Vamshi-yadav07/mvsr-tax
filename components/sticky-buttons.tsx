@@ -26,7 +26,7 @@ export function StickyButtons() {
 
   const handleWhatsAppClick = () => {
     // Replace with your WhatsApp number
-    window.open("https://wa.me/9347745942?text=Hi", "_blank")
+    window.open("https://wa.me/8074807355?text=Hi Ramlal! I want to know more about your services.", "_blank")
   }
 
   const handleExpertClick = () => {

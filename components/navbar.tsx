@@ -7,6 +7,7 @@ import { Menu, X, ArrowUpRight, ChevronDown } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
 
 const services = [
   { label: "Individual Tax", href: "/services/individual-tax", description: "Personal tax preparation & filing" },
@@ -27,6 +28,7 @@ const navItems = [
 ]
 
 export function Navbar() {
+  const router = useRouter()
   const [isOpen, setIsOpen] = React.useState(false)
   const [isScrolled, setIsScrolled] = React.useState(false)
   const [servicesOpen, setServicesOpen] = React.useState(false)
@@ -157,7 +159,7 @@ export function Navbar() {
 
           {/* CTA Button - Desktop */}
           <div className="hidden md:block">
-            <Button className="group gap-2 px-6 py-5 text-sm font-medium">
+            <Button className="group gap-2 px-6 py-5 text-sm font-medium" onClick={() => router.push("/contact-us")}>
               Get Started
               <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </Button>
@@ -260,7 +262,7 @@ export function Navbar() {
                 ))}
               </div>
               <div className="mt-6 border-t border-border pt-6">
-                <Button className="w-full gap-2 py-6" onClick={() => setIsOpen(false)}>
+                <Button className="w-full gap-2 py-6" onClick={() => router.push("/contact-us")}>
                   Get Started
                   <ArrowUpRight className="size-4" />
                 </Button>

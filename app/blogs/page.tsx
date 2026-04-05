@@ -1,13 +1,61 @@
 "use client"
 
+import { useState } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowRight, Clock, Calendar } from "lucide-react"
+import { ArrowRight, Clock, Calendar, Loader2 } from "lucide-react"
 import { Footer } from "@/components/footer"
 import { blogs, categoryColors } from "@/lib/blog-data"
 
 export default function BlogsPage() {
+    const [newsletterEmail, setNewsletterEmail] = useState("")
+    const [newsletterStatus, setNewsletterStatus] = useState<
+        "idle" | "loading" | "success" | "error"
+    >("idle")
+    const [newsletterError, setNewsletterError] = useState("")
+
+    async function handleNewsletterSubmit(e: React.FormEvent) {
+        e.preventDefault()
+        const email = newsletterEmail.trim()
+        if (!email) {
+            setNewsletterError("Please enter your email address.")
+            setNewsletterStatus("error")
+            return
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            setNewsletterError("Please enter a valid email address.")
+            setNewsletterStatus("error")
+            return
+        }
+
+        setNewsletterStatus("loading")
+        setNewsletterError("")
+
+        try {
+            const res = await fetch("/api/send", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ intent: "newsletter", email }),
+            })
+            const data = await res.json().catch(() => ({}))
+
+            if (!res.ok) {
+                throw new Error(
+                    typeof data.error === "string" ? data.error : "Something went wrong."
+                )
+            }
+
+            setNewsletterStatus("success")
+            setNewsletterEmail("")
+        } catch (err) {
+            setNewsletterStatus("error")
+            setNewsletterError(
+                err instanceof Error ? err.message : "Could not subscribe. Try again later."
+            )
+        }
+    }
+
     return (
         <>
             <main className="min-h-screen bg-background">
@@ -127,16 +175,52 @@ export default function BlogsPage() {
                                 Get the latest tax tips, financial insights, and MVSR Tax updates
                                 delivered right to your inbox.
                             </p>
-                            <div className="mx-auto mt-8 flex max-w-md flex-col gap-3 sm:flex-row">
+                            <form
+                                onSubmit={handleNewsletterSubmit}
+                                className="mx-auto mt-8 flex max-w-md flex-col gap-3 sm:flex-row"
+                            >
                                 <input
                                     type="email"
+                                    name="email"
+                                    autoComplete="email"
+                                    value={newsletterEmail}
+                                    onChange={(e) => {
+                                        setNewsletterEmail(e.target.value)
+                                        if (newsletterStatus === "error") {
+                                            setNewsletterStatus("idle")
+                                            setNewsletterError("")
+                                        }
+                                        if (newsletterStatus === "success") {
+                                            setNewsletterStatus("idle")
+                                        }
+                                    }}
                                     placeholder="Enter your email"
-                                    className="flex-1 rounded-lg border border-primary-foreground/20 bg-primary-foreground/10 px-4 py-3 text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary-foreground/30"
+                                    disabled={newsletterStatus === "loading"}
+                                    className="flex-1 rounded-lg border border-primary-foreground/20 bg-primary-foreground/10 px-4 py-3 text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary-foreground/30 disabled:opacity-60"
                                 />
-                                <button className="rounded-lg bg-primary-foreground px-6 py-3 font-medium text-primary transition-opacity hover:opacity-90">
-                                    Subscribe
+                                <button
+                                    type="submit"
+                                    disabled={newsletterStatus === "loading"}
+                                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary-foreground px-6 py-3 font-medium text-primary transition-opacity hover:opacity-90 disabled:pointer-events-none disabled:opacity-60"
+                                >
+                                    {newsletterStatus === "loading" ? (
+                                        <>
+                                            <Loader2 className="size-4 animate-spin" />
+                                            Sending
+                                        </>
+                                    ) : (
+                                        "Subscribe"
+                                    )}
                                 </button>
-                            </div>
+                            </form>
+                            {newsletterStatus === "success" && (
+                                <p className="mt-4 text-sm font-medium text-primary-foreground">
+                                    You&apos;re subscribed — we&apos;ll keep you posted.
+                                </p>
+                            )}
+                            {newsletterStatus === "error" && newsletterError && (
+                                <p className="mt-4 text-sm text-red-100">{newsletterError}</p>
+                            )}
                         </motion.div>
                     </div>
                 </section>

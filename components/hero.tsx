@@ -5,6 +5,7 @@ import { motion } from "framer-motion"
 import { ArrowRight, ArrowUpRight } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
 
 const stats = [
   { value: "6+", label: "Years Experience" },
@@ -13,6 +14,7 @@ const stats = [
 ]
 
 export function Hero() {
+  const router = useRouter()
   return (
     <section className="relative overflow-hidden">
       <div className="mx-auto max-w-6xl px-6 py-20 lg:px-8 lg:py-28">
@@ -44,10 +46,11 @@ export function Hero() {
 
             {/* CTA Buttons */}
             <div className="mt-10 flex flex-wrap items-center gap-4">
-              <Button size="lg" className="group gap-2 px-8 py-6 text-sm font-medium">
+              <Button onClick={() => router.push("/contact-us")} size="lg" className="group gap-2 px-8 py-6 text-sm font-medium">
                 Start Your Journey
               </Button>
               <Button
+                onClick={() => window.open("https://cal.com/sripathi-vamshi-yadav-cvquju/30min", "_blank")}
                 size="lg"
                 variant="ghost"
                 className="group gap-2 px-6 py-6 text-sm font-medium text-muted-foreground hover:text-foreground border border-border"
