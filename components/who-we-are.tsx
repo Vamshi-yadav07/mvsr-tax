@@ -30,7 +30,7 @@ export function WhoWeAre() {
           >
             <div className="relative aspect-3/4 overflow-hidden rounded-2xl bg-muted">
               <Image
-                src="/people-working-late-their-office.jpg"
+                src="/image4.jpg"
                 alt="Team working together in office"
                 fill
                 className="object-cover"
@@ -45,7 +45,7 @@ export function WhoWeAre() {
               transition={{ delay: 0.3, duration: 0.5 }}
               className="absolute -bottom-6 -right-6 rounded-xl border border-border bg-card p-6 shadow-lg"
             >
-              <p className="font-serif text-4xl tracking-tight text-foreground">16+</p>
+              <p className="font-serif text-4xl tracking-tight text-foreground">6+</p>
               <p className="mt-1 text-sm text-muted-foreground">Years of Excellence</p>
             </motion.div>
           </motion.div>

@@ -7,8 +7,8 @@ import { ArrowRight, ArrowUpRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 const stats = [
-  { value: "16+", label: "Years Experience" },
-  { value: "10K+", label: "Clients Served" },
+  { value: "6+", label: "Years Experience" },
+  { value: "100+", label: "Clients Served" },
   { value: "99%", label: "Client Satisfaction" },
 ]
 
@@ -83,7 +83,7 @@ export function Hero() {
           >
             <div className="relative aspect-4/5 overflow-hidden rounded-2xl bg-muted">
               <Image
-                src="/business-meeting-office.jpg"
+                src="/image-5.jpg"
                 alt="Professional tax consultation meeting"
                 fill
                 className="object-cover"

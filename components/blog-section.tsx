@@ -4,44 +4,15 @@ import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { ArrowUpRight } from "lucide-react"
+import { blogs } from "@/lib/blog-data"
 
-interface BlogPost {
-  id: number
-  title: string
-  description: string
-  image: string
-  slug: string
-  category: string
-}
-
-const blogPosts: BlogPost[] = [
-  {
-    id: 1,
-    title: "5 Common Tax Mistakes to Avoid This Season",
-    description: "Learn about the most frequent errors taxpayers make and how to steer clear of them for a smooth filing experience.",
-    image: "/business-meeting-office.jpg",
-    slug: "common-tax-mistakes",
-    category: "Tax Tips",
-  },
-  {
-    id: 2,
-    title: "Maximizing Deductions for Small Business Owners",
-    description: "Discover key deductions that can significantly reduce your tax liability and boost your business's bottom line.",
-    image: "/people-working-late-their-office.jpg",
-    slug: "small-business-deductions",
-    category: "Business",
-  },
-  {
-    id: 3,
-    title: "Understanding New Tax Law Changes",
-    description: "Stay informed about the latest tax legislation updates and how they might impact your financial planning.",
-    image: "/business-meeting-office.jpg",
-    slug: "tax-law-changes",
-    category: "Updates",
-  },
-]
-
-function BlogCard({ post, index }: { post: BlogPost; index: number }) {
+function BlogCard({
+  post,
+  index,
+}: {
+  post: (typeof blogs)[number]
+  index: number
+}) {
   const isFeature = index === 0
 
   return (
@@ -52,15 +23,21 @@ function BlogCard({ post, index }: { post: BlogPost; index: number }) {
       transition={{ duration: 0.5, delay: index * 0.1 }}
       className={`group ${isFeature ? "md:col-span-2 md:row-span-2" : ""}`}
     >
-      <Link href={`/blog/${post.slug}`} className="block">
+      <Link href={`/blogs/${post.slug}`} className="block">
         {/* Image */}
         <div className="relative aspect-16/10 overflow-hidden bg-muted">
-          <Image
-            src={post.image}
-            alt={post.title}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-          />
+          {post.image ? (
+            <Image
+              src={post.image}
+              alt={post.title}
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <div
+              className={`h-full w-full bg-gradient-to-br ${post.gradient ?? "from-muted to-muted-foreground/20"}`}
+            />
+          )}
         </div>
 
         {/* Content */}
@@ -72,7 +49,7 @@ function BlogCard({ post, index }: { post: BlogPost; index: number }) {
             {post.title}
           </h3>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground line-clamp-2">
-            {post.description}
+            {post.excerpt}
           </p>
           <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
             Read Article
@@ -105,7 +82,7 @@ export function BlogSection() {
             </h2>
           </div>
           <Link
-            href="/blog"
+            href="/blogs"
             className="group inline-flex items-center gap-2 text-sm font-medium text-foreground transition-colors hover:text-primary"
           >
             View All Articles
@@ -115,7 +92,7 @@ export function BlogSection() {
 
         {/* Blog Grid */}
         <div className="grid gap-12 md:grid-cols-2 lg:gap-16">
-          {blogPosts.map((post, index) => (
+          {blogs.map((post, index) => (
             <BlogCard key={post.id} post={post} index={index} />
           ))}
         </div>

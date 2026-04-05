@@ -34,42 +34,42 @@ import { Footer } from "@/components/footer"
 
 const keyFeatures = [
   {
-    number: "01",
+    // number: "01",
     icon: Wallet,
     title: "Effortless Payroll Management",
     description: "Say goodbye to payroll headaches! We ensure that your employees are paid accurately and on time, every time. We handle all aspects of payroll, from calculating wages to withholding taxes and filing necessary reports.",
     highlight: "Accurate, on-time payments—every time",
   },
   {
-    number: "02",
+    // number: "02",
     icon: Scale,
     title: "Tax Compliance Made Simple",
     description: "With changing tax regulations, staying compliant can be a challenge. We take care of all your payroll tax filings, ensuring that everything from federal and state withholdings to Social Security and Medicare taxes is reported and paid on time.",
     highlight: "Saving you from penalties and interest",
   },
   {
-    number: "03",
+    // number: "03",
     icon: Settings,
     title: "Custom Solutions for Your Business",
     description: "No two businesses are the same, and neither are their payroll needs. We tailor our services to fit your specific requirements, whether you have hourly employees, salaried staff, or contractors.",
     highlight: "Flexible solutions that evolve with your business",
   },
   {
-    number: "04",
+    // number: "04",
     icon: BookOpen,
     title: "Precise Bookkeeping & Financial Tracking",
     description: "Keep your financials in check with our accurate bookkeeping services. We manage all aspects of your business's financial records, from income and expenses to balance sheets and profit-and-loss statements.",
     highlight: "Books always up-to-date",
   },
   {
-    number: "05",
+    // number: "05",
     icon: Zap,
     title: "Maximize Efficiency with Automation",
     description: "Save time and reduce human error with our advanced payroll and bookkeeping software. We integrate modern technology to automate routine tasks, giving you more time to focus on growing your business.",
     highlight: "Complete financial transparency",
   },
   {
-    number: "06",
+    // number: "06",
     icon: Headphones,
     title: "Expert Guidance, Year-Round Support",
     description: "We don't just handle your payroll and bookkeeping—we partner with you to provide ongoing support. Our experts offer valuable financial insights, strategic advice, and ensure your records are ready for tax season.",
@@ -453,7 +453,7 @@ export default function PayrollBookkeepingPage() {
                 const Icon = feature.icon
                 return (
                   <motion.div
-                    key={feature.number}
+                    key={feature.title}
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
@@ -462,7 +462,7 @@ export default function PayrollBookkeepingPage() {
                   >
                     <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
                       <div className="flex shrink-0 items-center gap-4">
-                        <span className="font-serif text-3xl text-primary/30">{feature.number}</span>
+                        {/* <span className="font-serif text-3xl text-primary/30">{feature.number}</span> */}
                         <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10 transition-colors group-hover:bg-primary">
                           <Icon className="size-6 text-primary transition-colors group-hover:text-primary-foreground" />
                         </div>
