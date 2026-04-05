@@ -202,10 +202,10 @@ export default function IndividualTaxPage() {
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-4">
-                <Button size="lg" className="gap-2 px-8 py-6">
+                <Button size="lg" className="gap-2 px-8 py-6" onClick={() => window.open("https://cal.com/sripathi-vamshi-yadav-cvquju/30min", "_blank")}>
                   Schedule Consultation
                 </Button>
-                <Button size="lg" variant="outline" className="gap-2 px-8 py-6">
+                <Button size="lg" variant="outline" className="gap-2 px-8 py-6" onClick={() => window.open("tel:5107421419", "_blank")}>
                   Call 510-742-1419
                 </Button>
               </div>
@@ -542,14 +542,16 @@ export default function IndividualTaxPage() {
               <Button
                 size="lg"
                 className="gap-2 bg-background px-8 py-6 text-foreground hover:bg-background/90"
+                onClick={() => window.open("https://cal.com/sripathi-vamshi-yadav-cvquju/30min", "_blank")}
               >
                 Schedule Consultation
                 <ArrowUpRight className="size-4" />
               </Button>
               <Button
                 size="lg"
+                onClick={() => window.open("tel:5107421419", "_blank")}
                 variant="outline"
-                className="gap-2 border-background/20 bg-transparent px-8 py-6 text-background hover:bg-background/10"
+                className="gap-2 border-background/20 bg-transparent px-8 py-6 text-background hover:bg-background/90"
               >
                 <Phone className="size-4" />
                 510-742-1419

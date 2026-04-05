@@ -31,6 +31,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Footer } from "@/components/footer"
+import { useRouter } from "next/navigation"
 
 const keyFeatures = [
   {
@@ -239,17 +240,55 @@ function ContactForm() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState("")
+
+  const updateForm = (field: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }))
+    setSubmitError("")
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setSubmitError("")
     setIsSubmitting(true)
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    setIsSubmitting(false)
-    setIsSubmitted(true)
-    setTimeout(() => {
-      setIsSubmitted(false)
+
+    const messageParts = [
+      formData.serviceType.trim() && `Service needed: ${formData.serviceType.trim()}`,
+      formData.message.trim(),
+    ].filter(Boolean)
+    const composedMessage = messageParts.length > 0 ? messageParts.join("\n\n") : "—"
+
+    try {
+      const res = await fetch("/api/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          message: composedMessage,
+          service: "Payroll & Bookkeeping",
+        }),
+      })
+
+      const data = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        throw new Error(
+          typeof data.error === "string" ? data.error : "Failed to send message"
+        )
+      }
+
+      setIsSubmitted(true)
       setFormData({ name: "", email: "", phone: "", serviceType: "", message: "" })
-    }, 3000)
+      setTimeout(() => setIsSubmitted(false), 3000)
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error ? err.message : "Something went wrong. Please try again."
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -272,7 +311,7 @@ function ContactForm() {
             <Input
               placeholder="Your Name"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) => updateForm("name", e.target.value)}
               required
               className="h-12"
             />
@@ -280,7 +319,7 @@ function ContactForm() {
               type="email"
               placeholder="Email Address"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) => updateForm("email", e.target.value)}
               required
               className="h-12"
             />
@@ -290,23 +329,28 @@ function ContactForm() {
               type="tel"
               placeholder="Phone Number"
               value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              onChange={(e) => updateForm("phone", e.target.value)}
               className="h-12"
             />
             <Input
               placeholder="Service Needed (Payroll/Bookkeeping)"
               value={formData.serviceType}
-              onChange={(e) => setFormData({ ...formData, serviceType: e.target.value })}
+              onChange={(e) => updateForm("serviceType", e.target.value)}
               className="h-12"
             />
           </div>
           <Textarea
             placeholder="Tell us about your payroll or bookkeeping needs..."
             value={formData.message}
-            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+            onChange={(e) => updateForm("message", e.target.value)}
             rows={4}
             className="resize-none"
           />
+          {submitError && (
+            <p className="text-sm text-destructive" role="alert">
+              {submitError}
+            </p>
+          )}
           <Button type="submit" className="w-full gap-2 py-6" disabled={isSubmitting}>
             {isSubmitting ? (
               <>
@@ -327,6 +371,7 @@ function ContactForm() {
 }
 
 export default function PayrollBookkeepingPage() {
+  const router = useRouter()
   const [openPayrollFaqIndex, setOpenPayrollFaqIndex] = useState<number | null>(0)
   const [openBookkeepingFaqIndex, setOpenBookkeepingFaqIndex] = useState<number | null>(0)
 
@@ -377,11 +422,20 @@ export default function PayrollBookkeepingPage() {
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-4">
-                <Button size="lg" className="gap-2 px-8 py-6">
+                <Button
+                  size="lg"
+                  className="gap-2 px-8 py-6"
+                  onClick={() => router.push("/contact-us")}
+                >
                   Get Started
                   <ArrowUpRight className="size-4" />
                 </Button>
-                <Button size="lg" variant="outline" className="gap-2 px-8 py-6">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="gap-2 px-8 py-6"
+                  onClick={() => window.open("tel:5107421419", "_blank")}
+                >
                   <Phone className="size-4" />
                   Call 510-742-1419
                 </Button>
@@ -720,6 +774,9 @@ export default function PayrollBookkeepingPage() {
               <Button
                 size="lg"
                 className="gap-2 bg-background px-8 py-6 text-foreground hover:bg-background/90"
+                onClick={() =>
+                  window.open("https://cal.com/sripathi-vamshi-yadav-cvquju/30min", "_blank")
+                }
               >
                 Schedule Consultation
                 <ArrowUpRight className="size-4" />
@@ -727,7 +784,8 @@ export default function PayrollBookkeepingPage() {
               <Button
                 size="lg"
                 variant="outline"
-                className="gap-2 border-background/20 bg-transparent px-8 py-6 text-background hover:bg-background/10"
+                className="gap-2 border-background/20 bg-transparent px-8 py-6 text-background hover:bg-background/80"
+                onClick={() => window.open("tel:5107421419", "_blank")}
               >
                 <Phone className="size-4" />
                 510-742-1419

@@ -2,6 +2,8 @@
 
 import { motion } from "framer-motion"
 import Link from "next/link"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { 
   ArrowUpRight, 
   Check, 
@@ -15,9 +17,12 @@ import {
   Zap,
   MessageCircle,
   ChevronRight,
-  IdCard
+  IdCard,
+  Send
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Footer } from "@/components/footer"
 
 const services = [
@@ -108,7 +113,134 @@ const itinBenefits = [
   "Provide proof of residency for various purposes",
 ]
 
+function ContactForm() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState("")
+
+  const updateForm = (field: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }))
+    setSubmitError("")
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSubmitError("")
+    setIsSubmitting(true)
+
+    try {
+      const res = await fetch("/api/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          message: formData.message.trim() || "—",
+          service: "ITIN Processing",
+        }),
+      })
+
+      const data = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        throw new Error(
+          typeof data.error === "string" ? data.error : "Failed to send message"
+        )
+      }
+
+      setIsSubmitted(true)
+      setFormData({ name: "", email: "", phone: "", message: "" })
+      setTimeout(() => setIsSubmitted(false), 3000)
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error ? err.message : "Something went wrong. Please try again."
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {isSubmitted ? (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex flex-col items-center justify-center py-8 text-center"
+        >
+          <span className="flex size-12 items-center justify-center rounded-full bg-primary/10">
+            <Check className="size-6 text-primary" />
+          </span>
+          <p className="mt-4 font-medium text-foreground">Message Sent!</p>
+          <p className="mt-1 text-sm text-muted-foreground">We&apos;ll get back to you soon.</p>
+        </motion.div>
+      ) : (
+        <>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Input
+              placeholder="Your Name"
+              value={formData.name}
+              onChange={(e) => updateForm("name", e.target.value)}
+              required
+              className="h-12"
+            />
+            <Input
+              type="email"
+              placeholder="Email Address"
+              value={formData.email}
+              onChange={(e) => updateForm("email", e.target.value)}
+              required
+              className="h-12"
+            />
+          </div>
+          <Input
+            type="tel"
+            placeholder="Phone Number"
+            value={formData.phone}
+            onChange={(e) => updateForm("phone", e.target.value)}
+            className="h-12"
+          />
+          <Textarea
+            placeholder="Tell us about your ITIN needs..."
+            value={formData.message}
+            onChange={(e) => updateForm("message", e.target.value)}
+            rows={4}
+            className="resize-none"
+          />
+          {submitError && (
+            <p className="text-sm text-destructive" role="alert">
+              {submitError}
+            </p>
+          )}
+          <Button type="submit" className="w-full gap-2 py-6" disabled={isSubmitting}>
+            {isSubmitting ? (
+              <>
+                <span className="size-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
+                Sending...
+              </>
+            ) : (
+              <>
+                <Send className="size-4" />
+                Send Message
+              </>
+            )}
+          </Button>
+        </>
+      )}
+    </form>
+  )
+}
+
 export default function ITINProcessingPage() {
+  const router = useRouter()
+
   return (
     <main>
       {/* Hero Section */}
@@ -159,11 +291,20 @@ export default function ITINProcessingPage() {
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-4">
-                <Button size="lg" className="gap-2 px-8 py-6">
+                <Button
+                  size="lg"
+                  className="gap-2 px-8 py-6"
+                  onClick={() => router.push("/contact-us")}
+                >
                   Start ITIN Application
                   <ArrowUpRight className="size-4" />
                 </Button>
-                <Button size="lg" variant="outline" className="gap-2 px-8 py-6">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="gap-2 px-8 py-6"
+                  onClick={() => window.open("tel:5107421419", "_blank")}
+                >
                   <Phone className="size-4" />
                   Call 510-742-1419
                 </Button>
@@ -409,6 +550,42 @@ export default function ITINProcessingPage() {
             </div>
           </motion.div>
 
+          {/* Contact Form Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="mb-20"
+          >
+            <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+              <div>
+                <h2 className="font-serif text-3xl tracking-tight text-foreground">
+                  Questions About ITIN?
+                </h2>
+                <p className="mt-4 text-muted-foreground">
+                  Reach out and our team will help you understand eligibility, documents, and next steps.
+                </p>
+                <div className="mt-8 flex items-center gap-4">
+                  <div className="flex size-12 items-center justify-center rounded-full border border-border">
+                    <Phone className="size-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-wider text-muted-foreground">Call Us</p>
+                    <a href="tel:+15107421419" className="text-lg font-medium text-foreground hover:text-primary">
+                      510-742-1419
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-border bg-card p-8">
+                <h3 className="mb-6 font-serif text-lg text-foreground">Send us a message</h3>
+                <ContactForm />
+              </div>
+            </div>
+          </motion.div>
+
           {/* CTA Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -431,6 +608,9 @@ export default function ITINProcessingPage() {
               <Button
                 size="lg"
                 className="gap-2 bg-background px-8 py-6 text-foreground hover:bg-background/90"
+                onClick={() =>
+                  window.open("https://cal.com/sripathi-vamshi-yadav-cvquju/30min", "_blank")
+                }
               >
                 Start Your Application
                 <ArrowUpRight className="size-4" />
@@ -438,7 +618,8 @@ export default function ITINProcessingPage() {
               <Button
                 size="lg"
                 variant="outline"
-                className="gap-2 border-background/20 bg-transparent px-8 py-6 text-background hover:bg-background/10"
+                className="gap-2 border-background/20 bg-transparent px-8 py-6 text-background hover:bg-background/80"
+                onClick={() => window.open("tel:5107421419", "_blank")}
               >
                 <Phone className="size-4" />
                 510-742-1419

@@ -28,52 +28,53 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Footer } from "@/components/footer"
+import { useRouter } from "next/navigation"
 
 const keyFeatures = [
   {
-    number: "01",
+    // number: "01",
     icon: Target,
     title: "Personalized Tax Strategies",
     description: "One size does not fit all. We create customized tax plans based on your financial goals, whether you're an individual looking to optimize deductions or a business seeking long-term tax efficiency.",
     highlight: "Tailored plans that work for you",
   },
   {
-    number: "02",
+    // number: "02",
     icon: DollarSign,
     title: "Maximize Deductions & Credits",
     description: "Don't leave money on the table! Our team dives deep into your finances to identify all the available tax deductions and credits you qualify for, ensuring you're paying the lowest taxes possible.",
     highlight: "More savings, less stress",
   },
   {
-    number: "03",
+    // number: "03",
     icon: PiggyBank,
     title: "Retirement & Investment Tax Optimization",
     description: "Taxes don't stop at your paycheck. Whether you're saving for retirement or growing your investment portfolio, we help you develop strategies that minimize taxes on your returns.",
     highlight: "Grow your wealth, not your tax bill",
   },
   {
-    number: "04",
+    // number: "04",
     icon: Building2,
     title: "Business Tax Planning",
     description: "For businesses, effective tax planning is key to maximizing profitability. We work with business owners to structure their operations, manage expenses, and take advantage of tax-saving opportunities.",
     highlight: "Smart business decisions, optimized results",
   },
   {
-    number: "05",
+    // number: "05",
     icon: BarChart3,
     title: "Tax Efficiency Across All Income Sources",
     description: "Whether you're earning income from a job, investments, a side business, or real estate, we ensure that all your income streams are taxed efficiently while minimizing exposure.",
     highlight: "Diversify income, optimize taxes",
   },
   {
-    number: "06",
+    // number: "06",
     icon: Calendar,
     title: "Forward-Looking Strategies",
     description: "Tax planning isn't just about today; it's about the future. We work with you to plan for upcoming life events—such as buying a home, getting married, or starting a business.",
     highlight: "Plan today, save tomorrow",
   },
   {
-    number: "07",
+    // number: "07",
     icon: RefreshCw,
     title: "Ongoing Tax Monitoring & Adjustments",
     description: "Tax laws change, and so should your tax strategy. We offer year-round support to ensure your tax plan stays updated and optimized, so you're always prepared.",
@@ -220,17 +221,49 @@ function ContactForm() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState("")
+
+  const updateForm = (field: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }))
+    setSubmitError("")
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setSubmitError("")
     setIsSubmitting(true)
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    setIsSubmitting(false)
-    setIsSubmitted(true)
-    setTimeout(() => {
-      setIsSubmitted(false)
+
+    try {
+      const res = await fetch("/api/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          message: formData.message.trim() || "—",
+          service: "Tax Planning",
+        }),
+      })
+
+      const data = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        throw new Error(
+          typeof data.error === "string" ? data.error : "Failed to send message"
+        )
+      }
+
+      setIsSubmitted(true)
       setFormData({ name: "", email: "", phone: "", message: "" })
-    }, 3000)
+      setTimeout(() => setIsSubmitted(false), 3000)
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error ? err.message : "Something went wrong. Please try again."
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -253,7 +286,7 @@ function ContactForm() {
             <Input
               placeholder="Your Name"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) => updateForm("name", e.target.value)}
               required
               className="h-12"
             />
@@ -261,7 +294,7 @@ function ContactForm() {
               type="email"
               placeholder="Email Address"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) => updateForm("email", e.target.value)}
               required
               className="h-12"
             />
@@ -270,16 +303,21 @@ function ContactForm() {
             type="tel"
             placeholder="Phone Number"
             value={formData.phone}
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            onChange={(e) => updateForm("phone", e.target.value)}
             className="h-12"
           />
           <Textarea
             placeholder="Tell us about your tax planning goals..."
             value={formData.message}
-            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+            onChange={(e) => updateForm("message", e.target.value)}
             rows={4}
             className="resize-none"
           />
+          {submitError && (
+            <p className="text-sm text-destructive" role="alert">
+              {submitError}
+            </p>
+          )}
           <Button type="submit" className="w-full gap-2 py-6" disabled={isSubmitting}>
             {isSubmitting ? (
               <>
@@ -300,6 +338,7 @@ function ContactForm() {
 }
 
 export default function TaxPlanningPage() {
+  const router = useRouter()
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0)
 
   return (
@@ -352,11 +391,20 @@ export default function TaxPlanningPage() {
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-4">
-                <Button size="lg" className="gap-2 px-8 py-6">
+                <Button
+                  size="lg"
+                  className="gap-2 px-8 py-6"
+                  onClick={() => router.push("/contact-us")}
+                >
                   Start Planning
                   <ArrowUpRight className="size-4" />
                 </Button>
-                <Button size="lg" variant="outline" className="gap-2 px-8 py-6">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="gap-2 px-8 py-6"
+                  onClick={() => window.open("tel:5107421419", "_blank")}
+                >
                   <Phone className="size-4" />
                   Call 510-742-1419
                 </Button>
@@ -428,7 +476,7 @@ export default function TaxPlanningPage() {
                 const Icon = feature.icon
                 return (
                   <motion.div
-                    key={feature.number}
+                    key={feature.title}
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
@@ -437,7 +485,7 @@ export default function TaxPlanningPage() {
                   >
                     <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
                       <div className="flex shrink-0 items-center gap-4">
-                        <span className="font-serif text-3xl text-primary/30">{feature.number}</span>
+                        {/* <span className="font-serif text-3xl text-primary/30">{feature.number}</span> */}
                         <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10 transition-colors group-hover:bg-primary">
                           <Icon className="size-6 text-primary transition-colors group-hover:text-primary-foreground" />
                         </div>
@@ -636,6 +684,9 @@ export default function TaxPlanningPage() {
               <Button
                 size="lg"
                 className="gap-2 bg-background px-8 py-6 text-foreground hover:bg-background/90"
+                onClick={() =>
+                  window.open("https://cal.com/sripathi-vamshi-yadav-cvquju/30min", "_blank")
+                }
               >
                 Schedule Consultation
                 <ArrowUpRight className="size-4" />
@@ -643,7 +694,8 @@ export default function TaxPlanningPage() {
               <Button
                 size="lg"
                 variant="outline"
-                className="gap-2 border-background/20 bg-transparent px-8 py-6 text-background hover:bg-background/10"
+                className="gap-2 border-background/20 bg-transparent px-8 py-6 text-background hover:bg-background/80"
+                onClick={() => window.open("tel:5107421419", "_blank")}
               >
                 <Phone className="size-4" />
                 510-742-1419

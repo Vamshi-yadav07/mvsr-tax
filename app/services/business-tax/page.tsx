@@ -29,52 +29,52 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Footer } from "@/components/footer"
-
+import { useRouter } from "next/navigation"
 const keyFeatures = [
   {
-    number: "01",
+    // number: "01",
     icon: FileCheck,
     title: "Accurate, On-Time Filing",
     description: "Missing a deadline or making an error on your tax return can lead to costly penalties. We ensure your business tax returns are filed accurately and punctually, giving you peace of mind.",
     highlight: "On time, every time—no stress, no worries",
   },
   {
-    number: "02",
+    // number: "02",
     icon: DollarSign,
     title: "Maximizing Deductions and Credits",
     description: "Taxes are complicated, but we make them work for you! Our expert team identifies all available deductions and credits specific to your business, ensuring you pay the least amount legally possible.",
     highlight: "Maximize your savings while staying compliant",
   },
   {
-    number: "03",
+    // number: "03",
     icon: TrendingUp,
     title: "Tax Planning That Pays Off",
     description: "We don't just file your taxes; we provide year-round tax planning to help you optimize your tax strategy. Whether you're a small business or a growing enterprise, we align filings with your goals.",
     highlight: "Smart planning = bigger savings",
   },
   {
-    number: "04",
+    // number: "04",
     icon: Building2,
     title: "Comprehensive Business Tax Services",
     description: "From corporate income tax to sales tax and payroll taxes, we handle all the intricacies of business tax filings. Federal, state, and local—we've got your business covered across all tax categories.",
     highlight: "One stop for all your tax needs",
   },
   {
-    number: "05",
+    // number: "05",
     icon: Briefcase,
     title: "Industry-Specific Expertise",
     description: "No two businesses are alike, and neither are their tax needs. We tailor our services to meet the unique requirements of your industry—whether you're in retail, real estate, tech, or manufacturing.",
     highlight: "Industry experts with tax expertise",
   },
   {
-    number: "06",
+    // number: "06",
     icon: Shield,
     title: "Audit Protection & Support",
     description: "If your business is ever audited, we stand by you. Our team provides comprehensive support throughout the audit process, ensuring you're fully prepared and protected.",
     highlight: "In your corner—every step of the way",
   },
   {
-    number: "07",
+    // number: "07",
     icon: FileText,
     title: "Simplified Reporting and Communication",
     description: "Get the information you need without the confusion. We provide clear, concise financial reports that keep you informed and in control of your business's tax situation.",
@@ -249,17 +249,55 @@ function ContactForm() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState("")
+
+  const updateForm = (field: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }))
+    setSubmitError("")
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setSubmitError("")
     setIsSubmitting(true)
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    setIsSubmitting(false)
-    setIsSubmitted(true)
-    setTimeout(() => {
-      setIsSubmitted(false)
+
+    const messageParts = [
+      formData.businessType.trim() && `Business type: ${formData.businessType.trim()}`,
+      formData.message.trim(),
+    ].filter(Boolean)
+    const composedMessage = messageParts.length > 0 ? messageParts.join("\n\n") : "—"
+
+    try {
+      const res = await fetch("/api/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          message: composedMessage,
+          service: "Business Tax",
+        }),
+      })
+
+      const data = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        throw new Error(
+          typeof data.error === "string" ? data.error : "Failed to send message"
+        )
+      }
+
+      setIsSubmitted(true)
       setFormData({ name: "", email: "", phone: "", businessType: "", message: "" })
-    }, 3000)
+      setTimeout(() => setIsSubmitted(false), 3000)
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error ? err.message : "Something went wrong. Please try again."
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -282,7 +320,7 @@ function ContactForm() {
             <Input
               placeholder="Your Name"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) => updateForm("name", e.target.value)}
               required
               className="h-12"
             />
@@ -290,7 +328,7 @@ function ContactForm() {
               type="email"
               placeholder="Email Address"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) => updateForm("email", e.target.value)}
               required
               className="h-12"
             />
@@ -300,23 +338,28 @@ function ContactForm() {
               type="tel"
               placeholder="Phone Number"
               value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              onChange={(e) => updateForm("phone", e.target.value)}
               className="h-12"
             />
             <Input
               placeholder="Business Type (e.g., LLC, S-Corp)"
               value={formData.businessType}
-              onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
+              onChange={(e) => updateForm("businessType", e.target.value)}
               className="h-12"
             />
           </div>
           <Textarea
             placeholder="Tell us about your business tax needs..."
             value={formData.message}
-            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+            onChange={(e) => updateForm("message", e.target.value)}
             rows={4}
             className="resize-none"
           />
+          {submitError && (
+            <p className="text-sm text-destructive" role="alert">
+              {submitError}
+            </p>
+          )}
           <Button type="submit" className="w-full gap-2 py-6" disabled={isSubmitting}>
             {isSubmitting ? (
               <>
@@ -337,6 +380,7 @@ function ContactForm() {
 }
 
 export default function BusinessTaxPage() {
+  const router = useRouter()
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0)
 
   return (
@@ -387,11 +431,11 @@ export default function BusinessTaxPage() {
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-4">
-                <Button size="lg" className="gap-2 px-8 py-6">
+                <Button size="lg" className="gap-2 px-8 py-6" onClick={() => router.push("/contact-us")}>
                   Get Started
                   <ArrowUpRight className="size-4" />
                 </Button>
-                <Button size="lg" variant="outline" className="gap-2 px-8 py-6">
+                <Button size="lg" variant="outline" className="gap-2 px-8 py-6" onClick={() => window.open("tel:5107421419", "_blank")}>
                   <Phone className="size-4" />
                   Call 510-742-1419
                 </Button>
@@ -464,7 +508,7 @@ export default function BusinessTaxPage() {
                 const Icon = feature.icon
                 return (
                   <motion.div
-                    key={feature.number}
+                    key={feature.title}
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
@@ -473,7 +517,6 @@ export default function BusinessTaxPage() {
                   >
                     <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
                       <div className="flex shrink-0 items-center gap-4">
-                        <span className="font-serif text-3xl text-primary/30">{feature.number}</span>
                         <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10 transition-colors group-hover:bg-primary">
                           <Icon className="size-6 text-primary transition-colors group-hover:text-primary-foreground" />
                         </div>
@@ -736,6 +779,7 @@ export default function BusinessTaxPage() {
               <Button
                 size="lg"
                 className="gap-2 bg-background px-8 py-6 text-foreground hover:bg-background/90"
+                onClick={() => window.open("https://cal.com/sripathi-vamshi-yadav-cvquju/30min", "_blank")}
               >
                 Schedule Consultation
                 <ArrowUpRight className="size-4" />
@@ -743,7 +787,8 @@ export default function BusinessTaxPage() {
               <Button
                 size="lg"
                 variant="outline"
-                className="gap-2 border-background/20 bg-transparent px-8 py-6 text-background hover:bg-background/10"
+                className="gap-2 border-background/20 bg-transparent px-8 py-6 text-background hover:bg-background/80"
+                onClick={() => window.open("tel:5107421419", "_blank")}
               >
                 <Phone className="size-4" />
                 510-742-1419
